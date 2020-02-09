@@ -42,6 +42,22 @@ class Sail:
             % (self.serial, self.category, self.model, self.size, self.year)
         )
 
+        """
+        Need to include time of first time showing  up in database. 
+        Could be used to check if  sail is new or came back from repare or  looking for  mistakes.
+        
+        def deleteSail()
+        def sendToRepair()
+        def sellSail()
+        def createFileWithSails()
+        
+        
+        def readQr()        #to come in summer2020
+        
+        
+        PS Same classes for boards, masts and fins(imported to  boards-hashmap(board:fin)[special  situation for ignite!]
+        """
+
 
 """ail('BL45201')
 s2=Sail('BLP2010')
