@@ -1,5 +1,5 @@
 import SailsModelsAndCat
-
+import sqlite3
 
 class Sail:
     def __init__(
@@ -41,6 +41,11 @@ class Sail:
             "Serial:\t%s\nCategory:\t%s\nModel:\t%s\nSize:\t%.1f\nYear:\t%d"
             % (self.serial, self.category, self.model, self.size, self.year)
         )
+
+    def addSailtoSQLite(self):  #adding sail to SQLite user:reneeglic1; pass:fuckLagoon
+
+
+
 
         """
         Need to include time of first time showing  up in database. 
