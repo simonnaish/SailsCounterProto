@@ -1,13 +1,16 @@
 import SailsModelsAndCat
+import databaseHandler
+from datetime import date
 import sqlite3
+
 
 class Sail:
     def __init__(
         self, serial
-    ):  # , category, model, year, size, used, repaired):       #idea for future to  sign used/repaired sails?
-        self.serial = serial
-        prem = "premium"
-        wc = "world cup"
+    ):  # , category, model, year, size, date-added to database)    # used, repaired):       #idea for future to  sign used/repaired sails?
+        self.serial = serial                                   #UPDATE!!!#maybe bool "in repair?"? Keeping sail in database but hided.
+        prem = "premium"                                                 #Or separated database for sails in repair and sails sent to shop.
+        wc = "world cup"                                                 #deleted when destroyed or  sold. :)
 
         if (str(serial[:3]).lower() in SailsModelsAndCat.premiumSet) | (
             str(serial[:2]).lower() in SailsModelsAndCat.exclusiveModels
@@ -28,6 +31,10 @@ class Sail:
             self.year = 2019
         else:
             self.year = 2020
+
+        self.firstDate=date.today()
+
+
         """tempSize=serial[len(ser):len(ser)+2]
         strSize=''
         for x in tempSize: strSize=strSize+','+x
@@ -38,12 +45,20 @@ class Sail:
 
     def printDetails(self):  # print all details(I think quite goot for beginning)
         print(
-            "Serial:\t%s\nCategory:\t%s\nModel:\t%s\nSize:\t%.1f\nYear:\t%d"
-            % (self.serial, self.category, self.model, self.size, self.year)
+            "Serial:\t%s\nCategory:\t%s\nModel:\t%s\nSize:\t%.1f\nYear:\t%d\nAdded to database:\t%s"
+            % (self.serial, self.category, self.model, self.size, self.year, self.firstDate)
+        )
+    def printDetails(ser, cat, mod, si, ye, fDate):  # print all details(I think quite goot for beginning)
+        print(
+            "Serial:\t%s\nCategory:\t%s\nModel:\t%s\nSize:\t%.1f\nYear:\t%d\nAdded to database:\t%s"
+            % (ser, cat, mod, si, ye, fDate)
         )
 
-    def addSailtoSQLite(self):  #adding sail to SQLite user:reneeglic1; pass:fuckLagoon
 
+    def addSailtoSQLite(self):  #adding sail to SQLite user:reneeglic1; pass:fuckLagoon
+        databaseHandler.addSail(self.serial, self.category, self.model, self.size, self.year, self.firstDate)
+
+    def getSail(self):
 
 
 
@@ -51,7 +66,8 @@ class Sail:
         Need to include time of first time showing  up in database. 
         Could be used to check if  sail is new or came back from repare or  looking for  mistakes.
         
-        def deleteSail()
+        def deleteSail()print(s.category,s2.category)
+
         def sendToRepair()
         def sellSail()
         def createFileWithSails()
@@ -64,9 +80,13 @@ class Sail:
         """
 
 
-"""ail('BL45201')
-s2=Sail('BLP2010')
+s=Sail('BL45201')
+s2=Sail('BLP47210')
+s3=Sail('GT57211')
 
-print(s.category,s2.category)
 s.printDetails()
-"""
+s2.printDetails()
+s.addSailtoSQLite()
+s2.addSailtoSQLite()
+s3.printDetails()
+s3.addSailtoSQLite()
