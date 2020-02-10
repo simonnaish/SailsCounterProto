@@ -25,7 +25,7 @@ class Sail:
         else:
             ser = str(serial[:2]).lower()
         self.model = SailsModelsAndCat.modelsMap[ser]  # set model full name
-        if 1 == int(
+        if 9 == int(
             self.serial[-3]
         ):  # set year   #len(ser)+1:len(ser)+2 !!!!!!!!!!!!!!! DOESN'T WORK!!!!!!
             self.year = 2019
@@ -34,35 +34,25 @@ class Sail:
 
         self.firstDate=date.today()
 
-
-        """tempSize=serial[len(ser):len(ser)+2]
-        strSize=''
-        for x in tempSize: strSize=strSize+','+x
-        """
         self.size = (
             int(serial[len(ser) : len(ser) + 2]) / 10
         )  # set size...a bit freestyle?
+
 
     def printDetails(self):  # print all details(I think quite goot for beginning)
         print(
             "Serial:\t%s\nCategory:\t%s\nModel:\t%s\nSize:\t%.1f\nYear:\t%d\nAdded to database:\t%s"
             % (self.serial, self.category, self.model, self.size, self.year, self.firstDate)
         )
-    def printDetails(ser, cat, mod, si, ye, fDate):  # print all details(I think quite goot for beginning)
-        print(
-            "Serial:\t%s\nCategory:\t%s\nModel:\t%s\nSize:\t%.1f\nYear:\t%d\nAdded to database:\t%s"
-            % (ser, cat, mod, si, ye, fDate)
-        )
 
-
-    def addSailtoSQLite(self):  #adding sail to SQLite user:reneeglic1; pass:fuckLagoon
+    """def addSailtoSQLite(self):      #How to make  it directly in databaseHandler.py ????
         databaseHandler.addSail(self.serial, self.category, self.model, self.size, self.year, self.firstDate)
+"""             #DONE!!!!!!!!!!!!!!
 
     def getSail(self):
+        return self.serial, self.category, self.model, self.size, self.year, self.firstDate
+        """ self.category, self.model, self.size, self.year, self.firstDate)
 
-
-
-        """
         Need to include time of first time showing  up in database. 
         Could be used to check if  sail is new or came back from repare or  looking for  mistakes.
         
@@ -84,9 +74,9 @@ s=Sail('BL45201')
 s2=Sail('BLP47210')
 s3=Sail('GT57211')
 
-s.printDetails()
+"""s.printDetails()
 s2.printDetails()
 s.addSailtoSQLite()
 s2.addSailtoSQLite()
 s3.printDetails()
-s3.addSailtoSQLite()
+s3.addSailtoSQLite()"""
