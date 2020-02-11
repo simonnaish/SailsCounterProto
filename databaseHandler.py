@@ -1,4 +1,5 @@
 import sqlite3
+import pathlib
 from Sail import Sail
 
 
@@ -36,7 +37,7 @@ def addSail(serial):#, category, model, size, year, firstDate):
     try:
         sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
         cursor = sqliteConnection.cursor()
-        print('Connected to database')
+        #print('Connected to database')
 
         sqlite_insert_with_param =  """INSERT INTO Sails 
                                     (id, category, model, size, year, firstDate)
@@ -53,14 +54,14 @@ def addSail(serial):#, category, model, size, year, firstDate):
     finally:
         if (sqliteConnection):
             sqliteConnection.close()
-            print('Connection to database closed.')
+            #print('Connection to database closed.')
 
 
 def deleteSail(serial):
     try:
         sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
         cursor = sqliteConnection.cursor()
-        print('Connected to database')
+        #print('Connected to database')
 
         if checkSail(serial) == []:
             print("Sail %s does not exist"%serial)
@@ -75,53 +76,91 @@ def deleteSail(serial):
     finally:
         if (sqliteConnection):
             sqliteConnection.close()
-            print('Connection to database closed.')
+            #print('Connection to database closed.')
 
 
 def checkSail(serial):
-    sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
-    #cursor = sqliteConnection.cursor()
-    sqlite_check_query = """SELECT * FROM Sails WHERE id == ?"""
-    cursor = sqliteConnection.cursor()
-    cursor.execute(sqlite_check_query, (serial, ))
-    records=cursor.fetchall()
-    return records
+    try:
+        sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
+        sqlite_check_query = """SELECT * FROM Sails WHERE id == ?"""
+        cursor = sqliteConnection.cursor()
+        cursor.execute(sqlite_check_query, (serial, ))
+        records=cursor.fetchall()
+        return records
+    except sqlite3.Error as error:
+        print('Ups! Something went wrong!')
+    finally:
+        if (sqliteConnection):
+            sqliteConnection.close()
+            #print('Connection to database closed')
 
-def getSail(serial):            #not working
+def getSail(serial):
 
     records=checkSail(serial)
-    if records==[]:
+    if not records:
         print('Sail number %s does not exist in database.'%serial)
     else:
-        for row in records:
-            tserial = row[0]
-            tcategory = row[1]
-            tmodel = row[2]
-            tsize = row[3]
-            tyear = row[4]
-            tfirstDate = row[5]
-            print('chuj')
+        printing(records)
 
-            printDetails(tserial, tcategory, tmodel, tsize, tyear, tfirstDate)
+
+def saveList():         #TO DO: save to file
+    try:
+        sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
+        sqlite3_print_query = """SELECT * FROM Sails """
+        cursor = sqliteConnection.cursor()
+        cursor.execute(sqlite3_print_query)
+        records = cursor.fetchall()
+        if not records:
+            print('No sails in database.')
+        else:
+            f=open('SailsCenter1.txt','w')
+            line='Serial\tCategory\tModel\tSize\tYear\tFirst time in database\n'
+            f.write(line)
+            for row in records:
+                line=str(row[0])+'\t'+row[1]+'\t'+row[2]+'\t'+str(row[3])+'\t'+str(row[4])+'\t'+str(row[5])+'\n'
+                f.write(line)
+
+            f.close()
+        currentPath=str(pathlib.Path().absolute())
+        print('File saved in: %s'%currentPath)
+
+    except sqlite3.Error as error:
+        print('Ups! Something went wrong!')
+    finally:
+        if (sqliteConnection):
+            sqliteConnection.close()
+
+
+def printList():
+    try:
+        sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
+        sqlite3_print_query = """SELECT * FROM Sails """
+        cursor = sqliteConnection.cursor()
+        cursor.execute(sqlite3_print_query)
+        records=cursor.fetchall()
+        if not records:
+            print('No sails in database.')
+        else:
+            printing(records)
+
+    except sqlite3.Error as error:
+        print('Ups! Something went wrong!')
+    finally:
+        if (sqliteConnection):
+            sqliteConnection.close()
+
 
 def printDetails(ser, cat, mod, si, ye, fDate):  # print all details(I think quite goot for beginning)
     print("Serial:\t%s\nCategory:\t%s\nModel:\t%s\nSize:\t%.1f\nYear:\t%d\nAdded to database:\t%s"% (ser, cat, mod, si, ye, fDate))
 
+def printing(records):
+    for row in records:
+        tserial = row[0]
+        tcategory = row[1]
+        tmodel = row[2]
+        tsize = row[3]
+        tyear = row[4]
+        tfirstDate = row[5]
+        print('chuj')
 
-"""try:
-    sqliteConnection = sqlite3.connect('SQLite_Python.db')
-    cursor = sqliteConnection.cursor()
-    print("Database created and Successfully Connected to SQLite")
-
-    sqlite_select_Query = "select sqlite_version();"
-    cursor.execute(sqlite_select_Query)
-    record = cursor.fetchall()
-    print("SQLite Database Version is: ", record)
-    cursor.close()
-
-except sqlite3.Error as error:
-    print("Error while connecting to sqlite", error)
-finally:
-    if (sqliteConnection):
-        sqliteConnection.close()
-        print("The SQLite connection is closed")"""
+        printDetails(tserial, tcategory, tmodel, tsize, tyear, tfirstDate)
