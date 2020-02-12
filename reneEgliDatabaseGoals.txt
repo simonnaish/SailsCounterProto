@@ -25,7 +25,8 @@
             ▪ searching for the right board for fin
             ▪ changing board
         ◦ Goals: 
-                • all operations managed only by serial number of equipment
+                • adding/deleting operations managed only by serial number of equipment
+                • searching by any possible parameter
                 • keeping data directly in sqlite database
                 • unique key by number of equipment(for example: BL45201, SRP211)
                 • possible offline access do database with update option
