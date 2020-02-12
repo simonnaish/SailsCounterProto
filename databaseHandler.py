@@ -130,7 +130,6 @@ def saveList():         #TO DO: save to file
         if (sqliteConnection):
             sqliteConnection.close()
 
-
 def printList():
     try:
         sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
@@ -149,6 +148,24 @@ def printList():
         if (sqliteConnection):
             sqliteConnection.close()
 
+
+def printList():
+    try:
+        sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
+        sqlite3_print_query = """SELECT * FROM Sails """
+        cursor = sqliteConnection.cursor()
+        cursor.execute(sqlite3_print_query)
+        records=cursor.fetchall()
+        if not records:
+            print('No sails in database.')
+        else:
+            printing(records)
+
+    except sqlite3.Error as error:
+        print('Ups! Something went wrong!')
+    finally:
+        if (sqliteConnection):
+            sqliteConnection.close()
 
 def printDetails(ser, cat, mod, si, ye, fDate):  # print all details(I think quite goot for beginning)
     print("Serial:\t%s\nCategory:\t%s\nModel:\t%s\nSize:\t%.1f\nYear:\t%d\nAdded to database:\t%s"% (ser, cat, mod, si, ye, fDate))
