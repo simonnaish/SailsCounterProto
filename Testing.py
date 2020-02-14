@@ -30,12 +30,7 @@ for x in tb: sails.add(Sail(x))id, category, model, size, year, firstDate
 for x in sails: x.printDetails(), print('\n')
 """
 import databaseHandler
-from Sail import Sail
-databaseHandler.addSail('BL53205')
-"""Sail('GT57211').addSailtoSQLite()
-Sail.addSailtoSQLite('OVD78902')
-Sail.addSailtoSQLite('FR44200')
-"""
+"""databaseHandler.addSail('BL53205')
 databaseHandler.getSail('BL42901')
 databaseHandler.addSail('GT57911')
 databaseHandler.addSail('OVD78902')
@@ -45,5 +40,14 @@ databaseHandler.getSail('FR44200')
 databaseHandler.deleteSail('BL45201')
 databaseHandler.getSail('BL45201')
 databaseHandler.addSail('BL45201')
-#Sail.addSailtoSQLite('BL45201')
 databaseHandler.getSail('BL45201')
+
+databaseHandler.printList()
+databaseHandler.saveList()
+"""
+#databaseHandler.sendListSsl()
+#databaseHandler.sendListTls()
+#databaseHandler.sendListTlsGmail()
+# databaseHandler.saveList()
+databaseHandler.sendListSsl()
+#print(open('SailsCenter1.txt', 'r').read())
