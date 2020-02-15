@@ -1,14 +1,12 @@
 import SailsModelsAndCat
-import databaseHandler
 from datetime import date
-import sqlite3
 
 
 class Sail:
     def __init__(
         self, serial
     ):  # , category, model, year, size, date-added to database)    # used, repaired):       #idea for future to  sign used/repaired sails?
-        self.serial = serial                                   #UPDATE!!!#maybe bool "in repair?"? Keeping sail in database but hided.
+        self.serial = serial                                   #UPDATE!!!#maybe bool "in repair?"? Keeping sail in database but hiden.
         prem = "premium"                                                 #Or separated database for sails in repair and sails sent to shop.
         wc = "world cup"                                                 #deleted when destroyed or  sold. :)
 
@@ -32,7 +30,7 @@ class Sail:
         else:
             self.year = 2020
 
-        self.firstDate=date.today()
+        self.lastChange=date.today()
 
         self.size = (
             int(serial[len(ser) : len(ser) + 2]) / 10
@@ -42,19 +40,15 @@ class Sail:
     def printDetails(self):  # print all details(I think quite goot for beginning)
         print(
             "Serial:\t%s\nCategory:\t%s\nModel:\t%s\nSize:\t%.1f\nYear:\t%d\nAdded to database:\t%s"
-            % (self.serial, self.category, self.model, self.size, self.year, self.firstDate)
+            % (self.serial, self.category, self.model, self.size, self.year, self.lastChange)
         )
 
-    """def addSailtoSQLite(self):      #How to make  it directly in databaseHandler.py ????
-        databaseHandler.addSail(self.serial, self.category, self.model, self.size, self.year, self.firstDate)
-"""             #DONE!!!!!!!!!!!!!!
-
     def getSail(self):
-        return self.serial, self.category, self.model, self.size, self.year, self.firstDate
+        return self.serial, self.category, self.model, self.size, self.year, self.lastChange
         """ self.category, self.model, self.size, self.year, self.firstDate)
 
         Need to include time of first time showing  up in database. 
-        Could be used to check if  sail is new or came back from repare or  looking for  mistakes.
+        Could be used to check if  sail is new or came back from repaire or  looking for  mistakes.
         
         def deleteSail()print(s.category,s2.category)
 
@@ -68,15 +62,3 @@ class Sail:
         
         PS Same classes for boards, masts and fins(imported to  boards-hashmap(board:fin)[special  situation for ignite!]
         """
-
-
-s=Sail('BL45201')
-s2=Sail('BLP47210')
-s3=Sail('GT57211')
-
-"""s.printDetails()
-s2.printDetails()
-s.addSailtoSQLite()
-s2.addSailtoSQLite()
-s3.printDetails()
-s3.addSailtoSQLite()"""
