@@ -11,6 +11,10 @@ from Sail import Sail
 
 class DatabaseHandler:
    def __init__(self):
+       createBase()
+
+
+def createBase():
         try:
             sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
             sqlite_create_table_query = '''CREATE TABLE Sails (
@@ -142,6 +146,30 @@ def printList():
             sqliteConnection.close()
 
 
+def getAllSerials():        #for gui deleting/searching list
+    try:
+        sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
+        sqlite3_print_query = """SELECT id FROM Sails """
+        cursor = sqliteConnection.cursor()
+        cursor.execute(sqlite3_print_query)
+        records=cursor.fetchall()
+        if not records:
+            print('No sails in database.')
+        else:
+            #printing(records)
+            a=[]
+            for x in records:
+                a.append(str(x)[2:-3])
+            print(a)
+            return a
+
+    except sqlite3.Error as error:
+        print('Ups! Something went wrong!')
+    finally:
+        if (sqliteConnection):
+            sqliteConnection.close()
+
+
 def printDetails(ser, cat, mod, si, ye, fDate):  # print all details(I think quite goot for beginning)
     print("Serial:\t%s\nCategory:\t%s\nModel:\t%s\nSize:\t%.1f\nYear:\t%d\nAdded to database:\t%s"% (ser, cat, mod, si, ye, fDate))
 
@@ -150,7 +178,7 @@ def sendListSsl(list, date, lastDate = 0 ):
     gmailServer = "smtp.gmail.com"
     port = 465
     login = 'surfdeveloper@gmail.com'
-    password = 'yrdhcmeuejtypdyr'
+    password = 'krhhzomqbdowghcx'
     reciever = 'surfdeveloper@gmail.com'
 
     message = MIMEMultipart('alternative')
@@ -194,6 +222,8 @@ def sendMovementInDays(fromDate, toDate):
     list = ""
     for dt in daterange(fromDateObj, toDateObj):
         dailyList = movementOfDay(dt.strftime('%Y-%m-%d'))
+        if dailyList == None:
+            return print("No database")
         list += dailyList
     sendListSsl(list, fromDateObj, toDateObj)
     print('finish')
