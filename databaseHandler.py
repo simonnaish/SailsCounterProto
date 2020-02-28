@@ -6,8 +6,7 @@ from datetime import datetime, date, timedelta
 from time import mktime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from Sail import Sail
-
+from Sail import Sail, checkNumber
 
 class DatabaseHandler:
    def __init__(self):
@@ -41,19 +40,22 @@ def createBase():
                 print("sqlite connection is closed")
 
 
-def addSail(serial):#, category, model, size, year, firstDate):
-
+def addSail(serial):#, category, model, size, year, firstDate): #GUI done
+    if not checkNumber(serial):
+        print("Serial number wrong.")
+        return
     try:
         sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
         cursor = sqliteConnection.cursor()
         sqlite_insert_with_param =  """INSERT INTO Sails 
                                     (id, category, model, size, year, firstDate)
                                     VALUES(?,?,?,?,?,?);"""
-        datatuple = Sail(serial).getSail()#, category, model, size, year, firstDate)
+        datatuple = Sail(serial).getSail()
         cursor.execute(sqlite_insert_with_param, datatuple)
         sqliteConnection.commit()
         print('Sail added correctly to database.')
         cursor.close()
+        return True
     except sqlite3.IntegrityError:
         print('Sail %s already exist in database!'%serial)
     except sqlite3.Error as error:
@@ -63,7 +65,10 @@ def addSail(serial):#, category, model, size, year, firstDate):
             sqliteConnection.close()
 
 
-def deleteSail(serial):
+def deleteSail(serial):     #GUI done
+    if not checkNumber(serial):
+        print("Serial number wrong.")
+        return
     try:
         sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
         cursor = sqliteConnection.cursor()
@@ -71,12 +76,16 @@ def deleteSail(serial):
 
         if checkSail(serial) == []:
             print("Sail %s does not exist"%serial)
+            if (sqliteConnection):
+                sqliteConnection.close()
+            return False
         else:
             sqlite_delete_query= """DELETE FROM Sails WHERE id = ? """
             cursor.execute(sqlite_delete_query, (serial,))
             sqliteConnection.commit()
             print('Sail %s deleted from database'%serial)
         cursor.close()
+        return True
     except sqlite3.Error as error:
         print('Ups! Something went wrong!')
     finally:
@@ -84,7 +93,10 @@ def deleteSail(serial):
             sqliteConnection.close()
 
 
-def checkSail(serial):
+def checkSail(serial):      #GUI done
+    if not checkNumber(serial):
+        print("Serial number wrong.")
+        return
     try:
         sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
         sqlite_check_query = """SELECT * FROM Sails WHERE id == ?"""
@@ -99,7 +111,7 @@ def checkSail(serial):
             sqliteConnection.close()
 
 
-def saveList():
+def saveList():     #GUI done
     try:
         sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
         sqlite3_print_query = """SELECT * FROM Sails """
@@ -127,7 +139,7 @@ def saveList():
             sqliteConnection.close()
 
 
-def printList():
+def printList():        #GUI done
     try:
         sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
         sqlite3_print_query = """SELECT * FROM Sails """
@@ -135,9 +147,9 @@ def printList():
         cursor.execute(sqlite3_print_query)
         records=cursor.fetchall()
         if not records:
-            print('No sails in database.')
+            return 'No sails in database.'
         else:
-            printing(records)
+            return stringFullList(records)
 
     except sqlite3.Error as error:
         print('Ups! Something went wrong!')
@@ -146,7 +158,7 @@ def printList():
             sqliteConnection.close()
 
 
-def getAllSerials():        #for gui deleting/searching list
+def getAllSerials():        #for gui deleting/searching list    #GUI done
     try:
         sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
         sqlite3_print_query = """SELECT id FROM Sails """
@@ -160,7 +172,7 @@ def getAllSerials():        #for gui deleting/searching list
             a=[]
             for x in records:
                 a.append(str(x)[2:-3])
-            print(a)
+            # print(a)
             return a
 
     except sqlite3.Error as error:
@@ -175,28 +187,32 @@ def printDetails(ser, cat, mod, si, ye, fDate):  # print all details(I think qui
 
 
 def sendListSsl(list, date, lastDate = 0 ):
-    gmailServer = "smtp.gmail.com"
-    port = 465
-    login = 'surfdeveloper@gmail.com'
-    password = 'krhhzomqbdowghcx'
-    reciever = 'surfdeveloper@gmail.com'
+    try:
+        gmailServer = "smtp.gmail.com"
+        port = 465
+        login = 'surfdeveloper@gmail.com'
+        password = 'vyynzusvjmexilvz'
+        reciever = 'surfdeveloper@gmail.com'
 
-    message = MIMEMultipart('alternative')
-    message['From'] = 'Windsurfing Center 1 Rene Egli'
-    message['To'] = 'Megastore Rene Egli'
-    if lastDate == 0:
-        message['Subject'] = 'List of the day ' + (date.strftime("%A, %d. %B %Y"))
-    else:
-        message['Subject'] = 'List from ' + (date.strftime("%A, %d. %B %Y")) + 'until ' + (lastDate.strftime("%A, %d. %B %Y"))
+        message = MIMEMultipart('alternative')
+        message['From'] = 'Windsurfing Center 1 Rene Egli'
+        message['To'] = 'Megastore Rene Egli'
+        if lastDate == 0:
+            message['Subject'] = 'List of the day ' + (date.strftime("%A, %d. %B %Y"))
+        else:
+            message['Subject'] = 'List from ' + (date.strftime("%A, %d. %B %Y")) + 'until ' + (lastDate.strftime("%A, %d. %B %Y"))
 
-    part1 = MIMEText(list, 'plain') #list >>>text
-    message.attach(part1)
-    context = ssl.create_default_context()
-    with smtplib.SMTP_SSL(gmailServer, port, context=context) as server:
-        server.login(login, password)
-        server.sendmail(login, reciever, message.as_string())
-        server.close()
-
+        part1 = MIMEText(list, 'plain') #list >>>text
+        message.attach(part1)
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL(gmailServer, port, context=context) as server:
+            server.login(login, password)
+            server.sendmail(login, reciever, message.as_string())
+            server.close()
+        return True
+    except Exception as e:
+        print(e)
+        return False
 
 def sendFullListFromFile():
     fileName = 'SailsCenter1.txt'
@@ -205,15 +221,42 @@ def sendFullListFromFile():
     sendListSsl(converted, datetime.now())
 
 
-def sendMovementOfToday():
+def sendMovementOfToday():      #GUI done
     today=date.today()
     list = movementOfDay(today.strftime('%Y-%m-%d'))
-    sendListSsl(list, datetime.now())
+    if sendListSsl(list, datetime.now()):
+        return True
+
+
+def getAllDates():
+    try:
+        sqliteConnection = sqlite3.connect('SQLite_Python_ReneEgli.db')
+        sqlite3_print_query = """SELECT firstDate FROM Sails """
+        cursor = sqliteConnection.cursor()
+        cursor.execute(sqlite3_print_query)
+        records = cursor.fetchall()
+        dateDict = set()
+        dateList=[]
+        if not records:
+            print('No movements in database.')
+        else:
+            dateDict.update(records)
+            for x in dateDict:
+                dateList.append(str(x)[2:-3])
+
+        return dateList
+
+    except sqlite3.Error as error:
+        print('Ups! Something went wrong!')
+    finally:
+        if (sqliteConnection):
+            sqliteConnection.close()
 
 
 def sendMovementOfDay(date):
     list = movementOfDay(date)
-    sendListSsl(list, datetime.strptime(date, '%Y-%m-%d'))
+    if sendListSsl(list, datetime.strptime(date, '%Y-%m-%d')):
+        return True
 
 
 def sendMovementInDays(fromDate, toDate):
@@ -225,9 +268,10 @@ def sendMovementInDays(fromDate, toDate):
         if dailyList == None:
             return print("No database")
         list += dailyList
-    sendListSsl(list, fromDateObj, toDateObj)
-    print('finish')
-    print(list)
+    if sendListSsl(list, fromDateObj, toDateObj):
+        return True
+
+    #print(list)
 
 
 def daterange(fromD, toD):
@@ -263,6 +307,13 @@ def movementOfDay(date):    #date %Y-%m-%d
         if (sqliteConnection):
             sqliteConnection.close()
 
+def stringFullList(records):
+    line = 'Serial\tCategory\tModel\tSize\tYear\tFirst time in database\n'
+
+    for row in records:
+        line += str(row[0]) + ' ' + row[1] + ' ' + row[2] + ' ' + str(row[3]) + ' ' + str(row[4]) + ' ' + str(
+            row[5]) + '\n'
+    return line
 
 def printing(records):
     for row in records:
@@ -272,6 +323,5 @@ def printing(records):
         tsize = row[3]
         tyear = row[4]
         tLastChange = row[5]
-        print('chuj')
 
         printDetails(tserial, tcategory, tmodel, tsize, tyear, tLastChange)
